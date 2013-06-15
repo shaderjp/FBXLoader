@@ -1,0 +1,87 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns:atg="http://atg.xbox.com" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{8e114980-c1a3-4ada-ad7c-83caadf5daeb}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe</Extensions>
+    </Filter>
+    <Filter Include="Shaders">
+      <UniqueIdentifier>{2c3d4c8c-5d1a-459a-a05a-a4e4b608a44e}</UniqueIdentifier>
+      <Extensions>fx;fxh;hlsl</Extensions>
+    </Filter>
+    <Filter Include="FBXLoader">
+      <UniqueIdentifier>{d5c8f372-bebe-4957-9aee-0c2453cbe0bb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Assets">
+      <UniqueIdentifier>{f7ec465c-9911-430d-8f86-04f99205efff}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="CFBXRendererDX11.cpp">
+      <Filter>FBXLoader</Filter>
+    </ClCompile>
+    <ClCompile Include="CFBXLoader.cpp">
+      <Filter>FBXLoader</Filter>
+    </ClCompile>
+    <ClCompile Include="FBXLoaderSample.cpp" />
+    <ClCompile Include="DDSTextureLoader.cpp">
+      <Filter>FBXLoader</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <CLInclude Include="resource.h">
+      <Filter>Resource Files</Filter>
+    </CLInclude>
+    <ResourceCompile Include="Tutorial07.rc">
+      <Filter>Resource Files</Filter>
+    </ResourceCompile>
+    <ClInclude Include="CFBXRendererDX11.h">
+      <Filter>FBXLoader</Filter>
+    </ClInclude>
+    <ClInclude Include="CFBXLoader.h">
+      <Filter>FBXLoader</Filter>
+    </ClInclude>
+    <ClInclude Include="DDSTextureLoader.h">
+      <Filter>FBXLoader</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="Tutorial07.fx">
+      <Filter>Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="Tutorial07_PS.hlsl">
+      <Filter>Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="Tutorial07_VS.hlsl">
+      <Filter>Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="simpleRenderVS.hlsl">
+      <Filter>Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="simpleRenderPS.hlsl">
+      <Filter>Shaders</Filter>
+    </FxCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="seafloor.dds">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Assets\tex.png">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Assets\tex.dds">
+      <Filter>Assets</Filter>
+    </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Assets\model1.fbx">
+      <Filter>Assets</Filter>
+    </None>
+    <None Include="Assets\model2.fbx">
+      <Filter>Assets</Filter>
+    </None>
+    <None Include="Assets\model3.fbx">
+      <Filter>Assets</Filter>
+    </None>
+  </ItemGroup>
+</Project>
