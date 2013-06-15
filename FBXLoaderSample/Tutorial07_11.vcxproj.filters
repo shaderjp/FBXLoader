@@ -46,15 +46,6 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="Tutorial07.fx">
-      <Filter>Shaders</Filter>
-    </FxCompile>
-    <FxCompile Include="Tutorial07_PS.hlsl">
-      <Filter>Shaders</Filter>
-    </FxCompile>
-    <FxCompile Include="Tutorial07_VS.hlsl">
-      <Filter>Shaders</Filter>
-    </FxCompile>
     <FxCompile Include="simpleRenderVS.hlsl">
       <Filter>Shaders</Filter>
     </FxCompile>

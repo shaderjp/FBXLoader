@@ -1,17 +1,13 @@
-//--------------------------------------------------------------------------------------
-// File: Tutorial07.cpp
-//
-// This application demonstrates texturing
-//
-// http://msdn.microsoft.com/en-us/library/windows/apps/ff729724.aspx
-//
-// THIS CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT WARRANTY OF
-// ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT LIMITED TO
-// THE IMPLIED WARRANTIES OF MERCHANTABILITY AND/OR FITNESS FOR A
-// PARTICULAR PURPOSE.
-//
-// Copyright (c) Microsoft Corporation. All rights reserved.
-//--------------------------------------------------------------------------------------
+// *********************************************************************************************************************
+/// 
+/// @file 		FBXLoaderSample.cpp
+/// @brief		FBX•`‰æƒTƒ“ƒvƒ‹
+/// 
+/// @author 	Masafumi Takahashi
+/// @date 		2013/06/15
+/// 
+// *********************************************************************************************************************
+
 #include <windows.h>
 #include <d3d11.h>
 #include <directxmath.h>
@@ -146,7 +142,7 @@ HRESULT InitWindow( HINSTANCE hInstance, int nCmdShow )
     g_hInst = hInstance;
     RECT rc = { 0, 0, 640, 480 };
     AdjustWindowRect( &rc, WS_OVERLAPPEDWINDOW, FALSE );
-    g_hWnd = CreateWindow( L"TutorialWindowClass", L"Direct3D 11 Tutorial 7", WS_OVERLAPPEDWINDOW,
+    g_hWnd = CreateWindow( L"TutorialWindowClass", L"Direct3D 11 FBX Sample", WS_OVERLAPPEDWINDOW,
                            CW_USEDEFAULT, CW_USEDEFAULT, rc.right - rc.left, rc.bottom - rc.top, NULL, NULL, hInstance,
                            NULL );
     if( !g_hWnd )
