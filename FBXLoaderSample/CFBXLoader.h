@@ -27,7 +27,7 @@ typedef std::tr1::unordered_map<std::string, int> UVsetID;
 // UVSet名, テクスチャパス名(１つのUVSetに複数のテクスチャがぶら下がってることがある)
 typedef std::tr1::unordered_map<std::string, std::vector<std::string>> TextureSet;
 
-namespace FBXVIEW
+namespace FBX_LOADER
 {
 
 struct FBX_MATRIAL_ELEMENT
@@ -190,4 +190,4 @@ public:
 	FBX_MESH_NODE&	GetNode(const unsigned int id);
 };
 
-}	// FBXVIEW
+}	// FBX_LOADER

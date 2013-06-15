@@ -54,7 +54,7 @@ const DWORD	NUMBER_OF_MODELS = 3;
 HRESULT InitApp();
 void CleanupApp();
 void UpdateApp();
-FBXVIEW::CFBXRenderDX11*	g_pFbxDX11[NUMBER_OF_MODELS];
+FBX_LOADER::CFBXRenderDX11*	g_pFbxDX11[NUMBER_OF_MODELS];
 char g_files[NUMBER_OF_MODELS][256] =
 {
 	"Assets\\model1.fbx",
@@ -315,7 +315,7 @@ HRESULT InitApp()
 
 	for(DWORD i=0;i<NUMBER_OF_MODELS;i++)
 	{
-		g_pFbxDX11[i] = new FBXVIEW::CFBXRenderDX11;
+		g_pFbxDX11[i] = new FBX_LOADER::CFBXRenderDX11;
 		hr = g_pFbxDX11[i]->LoadFBX(g_files[i], g_pd3dDevice);
 	}
 	if( FAILED( hr ) )
@@ -583,7 +583,7 @@ void Render()
 
 			g_pImmediateContext->Unmap( g_pcBuffer, 0 );
 
-			FBXVIEW::MATERIAL_DATA material = g_pFbxDX11[i]->GetNodeMaterial(j);
+			FBX_LOADER::MATERIAL_DATA material = g_pFbxDX11[i]->GetNodeMaterial(j);
 
 			if(material.pMaterialCb)
 				g_pImmediateContext->UpdateSubresource(material.pMaterialCb, 0, NULL, &material.materialConstantData, 0, 0);

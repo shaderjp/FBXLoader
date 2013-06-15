@@ -13,7 +13,7 @@
 #include "DDSTextureLoader.h"
 #include < locale.h >
 
-namespace FBXVIEW
+namespace FBX_LOADER
 {
 
 CFBXRenderDX11::CFBXRenderDX11()
@@ -352,4 +352,4 @@ HRESULT CFBXRenderDX11::RenderNode( ID3D11DeviceContext* pImmediateContext, cons
 	return hr;
 }
 
-}	// namespace FBXVIEW
+}	// namespace FBX_LOADER

@@ -17,7 +17,7 @@
 #include <d3dcompiler.h>
 #include <DirectXMath.h>
 
-namespace FBXVIEW
+namespace FBX_LOADER
 {
 
 struct	VERTEX_DATA
@@ -182,4 +182,4 @@ public:
 	MATERIAL_DATA& GetNodeMaterial( const size_t id ){ return m_meshNodeArray[id].materialData; };
 };
 
-}	// namespace FBXVIEW
+}	// namespace FBX_LOADER

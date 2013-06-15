@@ -11,7 +11,7 @@
 
 #include "CFBXLoader.h"
 
-namespace FBXVIEW
+namespace FBX_LOADER
 {
 
 CFBXLoader::CFBXLoader()
@@ -455,4 +455,4 @@ FBX_MESH_NODE& CFBXLoader::GetNode(const unsigned int id)
 	return m_meshNodeArray[id];
 }
 
-}	// FBXVIEW
+}	// FBX_LOADER
