@@ -478,7 +478,6 @@
     <ClInclude Include="CFBXRendererDX11.h" />
     <ClInclude Include="DDSTextureLoader.h" />
     <CLInclude Include="resource.h" />
-    <ResourceCompile Include="Tutorial07.rc" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Assets\tex.dds" />
@@ -489,6 +488,9 @@
     <None Include="Assets\model1.fbx" />
     <None Include="Assets\model2.fbx" />
     <None Include="Assets\model3.fbx" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="FBXLoaderSample.rc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets" />

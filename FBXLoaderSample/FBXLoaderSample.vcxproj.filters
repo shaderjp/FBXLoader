@@ -32,9 +32,6 @@
     <CLInclude Include="resource.h">
       <Filter>Resource Files</Filter>
     </CLInclude>
-    <ResourceCompile Include="Tutorial07.rc">
-      <Filter>Resource Files</Filter>
-    </ResourceCompile>
     <ClInclude Include="CFBXRendererDX11.h">
       <Filter>FBXLoader</Filter>
     </ClInclude>
@@ -74,5 +71,10 @@
     <None Include="Assets\model3.fbx">
       <Filter>Assets</Filter>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="FBXLoaderSample.rc">
+      <Filter>Resource Files</Filter>
+    </ResourceCompile>
   </ItemGroup>
 </Project>

@@ -6,7 +6,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		..\..\..\..\APPDATA\LOCAL\MICROSOFT\VISUALSTUDIO\11.0\EXTENSIONS\5XZ3DMAY.0YP\description.html = ..\..\..\..\APPDATA\LOCAL\MICROSOFT\VISUALSTUDIO\11.0\EXTENSIONS\5XZ3DMAY.0YP\description.html
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "FBXLoaderSample", "FBXLoaderSample\Tutorial07_11.vcxproj", "{D29C6982-A589-4081-89B1-91E78D7C41E2}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "FBXLoaderSample", "FBXLoaderSample\FBXLoaderSample.vcxproj", "{D29C6982-A589-4081-89B1-91E78D7C41E2}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
