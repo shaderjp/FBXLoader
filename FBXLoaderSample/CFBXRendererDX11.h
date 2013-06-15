@@ -160,8 +160,8 @@ class CFBXRenderDX11
 	HRESULT VertexConstruction(ID3D11Device*	pd3dDevice,FBX_MESH_NODE &fbxNode, MESH_NODE& meshNode);
 	HRESULT MaterialConstruction(ID3D11Device*	pd3dDevice,FBX_MESH_NODE &fbxNode,  MESH_NODE& meshNode);
 
-	HRESULT CreateVertexBuffer( ID3D11Device*	pd3dDevice, ID3D11Buffer** pBuffer, void* pVertices, size_t stride, size_t vertexCount );
-	HRESULT CreateIndexBuffer( ID3D11Device*	pd3dDevice, ID3D11Buffer** pBuffer, void* pIndices, size_t indexCount );
+	HRESULT CreateVertexBuffer( ID3D11Device*	pd3dDevice, ID3D11Buffer** pBuffer, void* pVertices, uint32_t stride, uint32_t vertexCount );
+	HRESULT CreateIndexBuffer( ID3D11Device*	pd3dDevice, ID3D11Buffer** pBuffer, void* pIndices, uint32_t indexCount );
 
 public:
 	CFBXRenderDX11();

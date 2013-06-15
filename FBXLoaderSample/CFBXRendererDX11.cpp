@@ -83,7 +83,7 @@ HRESULT CFBXRenderDX11::CreateNodes(ID3D11Device*	pd3dDevice)
 		meshNode.indexCount = static_cast<DWORD>(fbxNode.indexArray.size());
 		meshNode.SetIndexBit(meshNode.indexCount);
 		if(fbxNode.indexArray.size() > 0)
-			hr = CreateIndexBuffer(pd3dDevice, &meshNode.m_pIB, &fbxNode.indexArray[0], fbxNode.indexArray.size());
+			hr = CreateIndexBuffer(pd3dDevice, &meshNode.m_pIB, &fbxNode.indexArray[0], static_cast<uint32_t>(fbxNode.indexArray.size()));
 
 		memcpy( meshNode.mat4x4, fbxNode.mat4x4,sizeof(float)*16 );
 
@@ -96,7 +96,7 @@ HRESULT CFBXRenderDX11::CreateNodes(ID3D11Device*	pd3dDevice)
 	return hr;
 }
 
-HRESULT CFBXRenderDX11::CreateVertexBuffer(  ID3D11Device*	pd3dDevice, ID3D11Buffer** pBuffer, void* pVertices, size_t stride, size_t vertexCount )
+HRESULT CFBXRenderDX11::CreateVertexBuffer(  ID3D11Device*	pd3dDevice, ID3D11Buffer** pBuffer, void* pVertices, uint32_t stride, uint32_t vertexCount )
 {
 	if(!pd3dDevice || stride==0 || vertexCount==0)
 		return E_FAIL;
@@ -121,7 +121,7 @@ HRESULT CFBXRenderDX11::CreateVertexBuffer(  ID3D11Device*	pd3dDevice, ID3D11Buf
 	return hr;
 }
 
-HRESULT CFBXRenderDX11::CreateIndexBuffer(  ID3D11Device*	pd3dDevice, ID3D11Buffer** pBuffer, void* pIndices , size_t indexCount )
+HRESULT CFBXRenderDX11::CreateIndexBuffer(  ID3D11Device*	pd3dDevice, ID3D11Buffer** pBuffer, void* pIndices , uint32_t indexCount )
 {
 	if(!pd3dDevice || indexCount==0)
 		return E_FAIL;
@@ -132,7 +132,7 @@ HRESULT CFBXRenderDX11::CreateIndexBuffer(  ID3D11Device*	pd3dDevice, ID3D11Buff
 	D3D11_BUFFER_DESC bd;
     ZeroMemory( &bd, sizeof(bd) );
     bd.Usage = D3D11_USAGE_DEFAULT;
-    bd.ByteWidth = stlide*indexCount;
+    bd.ByteWidth = static_cast<uint32_t>(stlide*indexCount);
     bd.BindFlags = D3D11_BIND_INDEX_BUFFER;
     bd.CPUAccessFlags = 0;
     D3D11_SUBRESOURCE_DATA InitData;
@@ -149,7 +149,7 @@ HRESULT CFBXRenderDX11::CreateIndexBuffer(  ID3D11Device*	pd3dDevice, ID3D11Buff
 
 HRESULT CFBXRenderDX11::VertexConstruction(ID3D11Device*	pd3dDevice, FBX_MESH_NODE &fbxNode, MESH_NODE& meshNode)
 {
-	meshNode.vertexCount = fbxNode.m_positionArray.size();
+	meshNode.vertexCount = static_cast<DWORD>(fbxNode.m_positionArray.size());
 	if(!pd3dDevice || meshNode.vertexCount==0)
 		return E_FAIL;
 
