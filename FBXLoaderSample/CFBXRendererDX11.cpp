@@ -127,12 +127,12 @@ HRESULT CFBXRenderDX11::CreateIndexBuffer(  ID3D11Device*	pd3dDevice, ID3D11Buff
 		return E_FAIL;
 
 	HRESULT hr = S_OK;
-	size_t stlide = sizeof(unsigned int);
+	size_t stride = sizeof(unsigned int);
 		
 	D3D11_BUFFER_DESC bd;
     ZeroMemory( &bd, sizeof(bd) );
     bd.Usage = D3D11_USAGE_DEFAULT;
-    bd.ByteWidth = static_cast<uint32_t>(stlide*indexCount);
+    bd.ByteWidth = static_cast<uint32_t>(stride*indexCount);
     bd.BindFlags = D3D11_BIND_INDEX_BUFFER;
     bd.CPUAccessFlags = 0;
     D3D11_SUBRESOURCE_DATA InitData;
