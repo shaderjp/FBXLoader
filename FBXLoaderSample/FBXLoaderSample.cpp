@@ -54,6 +54,8 @@ const DWORD	NUMBER_OF_MODELS = 3;
 HRESULT InitApp();
 void CleanupApp();
 void UpdateApp();
+HRESULT SetupTransformSRV();
+void	SetMatrix();
 FBX_LOADER::CFBXRenderDX11*	g_pFbxDX11[NUMBER_OF_MODELS];
 char g_files[NUMBER_OF_MODELS][256] =
 {
@@ -74,6 +76,14 @@ ID3D11RasterizerState*			g_pRS = nullptr;
 ID3D11Buffer*					g_pcBuffer = nullptr;
 ID3D11VertexShader*                 g_pvsFBX = nullptr;
 ID3D11PixelShader*                  g_ppsFBX = nullptr;
+
+struct SRVPerInstanceData
+{
+	XMMATRIX mWorld;
+};
+const uint32_t g_InstanceMAX = 32;
+ID3D11Buffer*					g_pTransformStructuredBuffer = nullptr;
+ID3D11ShaderResourceView*		g_pTransformSRV = nullptr;
 
 //--------------------------------------------------------------------------------------
 // Entry point to the program. Initializes everything and goes into a message processing 
@@ -300,7 +310,12 @@ HRESULT InitDevice()
      // Initialize the world matrices
     g_World = XMMatrixIdentity();
 		
-	InitApp();
+	hr = InitApp();
+    if( FAILED( hr ) )
+        return hr;
+	hr = SetupTransformSRV();
+    if( FAILED( hr ) )
+        return hr;
 
     return S_OK;
 }
@@ -417,8 +432,56 @@ HRESULT InitApp()
 }
 
 //
+HRESULT SetupTransformSRV()
+{
+	HRESULT hr = S_OK;
+
+	const uint32_t count = g_InstanceMAX;
+	const uint32_t stride = static_cast<uint32_t>( sizeof(SRVPerInstanceData) );
+
+	// Create StructuredBuffer
+	D3D11_BUFFER_DESC bd;
+    ZeroMemory( &bd, sizeof(bd) );
+    bd.Usage = D3D11_USAGE_DYNAMIC;
+	bd.ByteWidth = stride * count;
+    bd.BindFlags = D3D11_BIND_SHADER_RESOURCE;
+    bd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+	bd.MiscFlags = D3D11_RESOURCE_MISC_BUFFER_STRUCTURED ;
+	bd.StructureByteStride = stride;
+	hr = g_pd3dDevice->CreateBuffer( &bd, NULL, &g_pTransformStructuredBuffer );
+    if( FAILED( hr ) )
+        return hr;
+
+	// Create ShaderResourceView
+	D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc;
+	ZeroMemory( &srvDesc, sizeof(D3D11_SHADER_RESOURCE_VIEW_DESC) );
+	srvDesc.ViewDimension = D3D11_SRV_DIMENSION_BUFFEREX;   // 拡張されたバッファーであることを指定する
+	srvDesc.BufferEx.FirstElement = 0;
+	srvDesc.Format = DXGI_FORMAT_UNKNOWN;
+	srvDesc.BufferEx.NumElements = count;                  // リソース内の要素の数
+
+   // 構造化バッファーをもとにシェーダーリソースビューを作成する
+	hr = g_pd3dDevice->CreateShaderResourceView( g_pTransformStructuredBuffer, &srvDesc, &g_pTransformSRV );
+    if( FAILED( hr ) )
+        return hr;
+
+	return hr;
+}
+
+//
 void CleanupApp()
 {
+	if(g_pTransformSRV)
+	{
+		g_pTransformSRV->Release();
+		g_pTransformSRV = nullptr;
+	}
+	if(g_pTransformStructuredBuffer)
+	{
+		g_pTransformStructuredBuffer->Release();
+		g_pTransformStructuredBuffer = nullptr;
+	}
+
 	if(g_pBlendState)
 	{
 		g_pBlendState->Release();
@@ -501,6 +564,26 @@ LRESULT CALLBACK WndProc( HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam 
     return 0;
 }
 
+//
+void SetMatrix()
+{
+	HRESULT hr = S_OK;
+	const uint32_t count = g_InstanceMAX;
+	XMMATRIX mat;
+
+	D3D11_MAPPED_SUBRESOURCE MappedResource;
+	hr = g_pImmediateContext->Map( g_pTransformStructuredBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &MappedResource );
+
+	SRVPerInstanceData*	pSrvInstanceData = (SRVPerInstanceData*)MappedResource.pData;
+	
+	for(uint32_t i=0;i<count;i++)
+	{
+		mat = XMMatrixTranslation( 0, 0, i*60.0f );
+		pSrvInstanceData[i].mWorld = ( mat );
+	}
+
+	g_pImmediateContext->Unmap(g_pTransformStructuredBuffer, 0);
+}
 
 //--------------------------------------------------------------------------------------
 // Render a frame
@@ -576,23 +659,33 @@ void Render()
 			CBFBXMATRIX*	cbFBX = (CBFBXMATRIX*)MappedResource.pData;
 
 			// 左手系
+#if 0
 			cbFBX->mWorld = XMMatrixTranspose( mLocal*g_World );
 			cbFBX->mView = XMMatrixTranspose( g_View );
 			cbFBX->mProj = XMMatrixTranspose( g_Projection );
+#else
+			cbFBX->mWorld = ( g_World );
+			cbFBX->mView = ( g_View );
+			cbFBX->mProj = ( g_Projection );
+#endif
 			cbFBX->mWVP = XMMatrixTranspose( mLocal*g_World*g_View*g_Projection );
 
 			g_pImmediateContext->Unmap( g_pcBuffer, 0 );
+
+			SetMatrix();
 
 			FBX_LOADER::MATERIAL_DATA material = g_pFbxDX11[i]->GetNodeMaterial(j);
 
 			if(material.pMaterialCb)
 				g_pImmediateContext->UpdateSubresource(material.pMaterialCb, 0, NULL, &material.materialConstantData, 0, 0);
 
+			g_pImmediateContext->VSSetShaderResources(0, 1, &g_pTransformSRV);
 			g_pImmediateContext->PSSetShaderResources(0, 1, &material.pSRV);
 			g_pImmediateContext->PSSetConstantBuffers(0, 1, &material.pMaterialCb);
 			g_pImmediateContext->PSSetSamplers(0, 1, &material.pSampler);
 	
-				g_pFbxDX11[i]->RenderNode( g_pImmediateContext, j );
+//			g_pFbxDX11[i]->RenderNode( g_pImmediateContext, j );
+			g_pFbxDX11[i]->RenderNodeInstancing(g_pImmediateContext, j,g_InstanceMAX);
 		}
 	}
 
