@@ -71,6 +71,9 @@
     <None Include="Assets\model3.fbx">
       <Filter>Assets</Filter>
     </None>
+    <None Include="Assets\Arial.spritefont">
+      <Filter>Assets</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="FBXLoaderSample.rc">

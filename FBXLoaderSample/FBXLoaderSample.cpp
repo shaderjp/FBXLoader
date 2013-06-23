@@ -436,7 +436,7 @@ HRESULT InitApp()
 	// SpriteBatch
 	g_pSpriteBatch = new DirectX::SpriteBatch(g_pImmediateContext);
 	// SpriteFont
-	g_pFont = new DirectX::SpriteFont(g_pd3dDevice, L"Assets\\Arial.ft");
+	g_pFont = new DirectX::SpriteFont(g_pd3dDevice, L"Assets\\Arial.spritefont");
 
 
 	return hr;
