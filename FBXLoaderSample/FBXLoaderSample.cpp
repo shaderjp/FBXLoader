@@ -15,6 +15,8 @@
 #include "resource.h"
 #include <d3dcompiler.h>
 
+#include <SpriteFont.h>
+
 #include "CFBXRendererDX11.h"
 
 using namespace DirectX;
@@ -84,6 +86,9 @@ struct SRVPerInstanceData
 const uint32_t g_InstanceMAX = 32;
 ID3D11Buffer*					g_pTransformStructuredBuffer = nullptr;
 ID3D11ShaderResourceView*		g_pTransformSRV = nullptr;
+
+DirectX::SpriteBatch*		g_pSpriteBatch = nullptr;
+DirectX::SpriteFont*		g_pFont = nullptr;
 
 //--------------------------------------------------------------------------------------
 // Entry point to the program. Initializes everything and goes into a message processing 
@@ -274,7 +279,7 @@ HRESULT InitDevice()
     descDepth.Height = height;
     descDepth.MipLevels = 1;
     descDepth.ArraySize = 1;
-    descDepth.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
+	descDepth.Format = DXGI_FORMAT_D32_FLOAT_S8X24_UINT;
     descDepth.SampleDesc.Count = 1;
     descDepth.SampleDesc.Quality = 0;
     descDepth.Usage = D3D11_USAGE_DEFAULT;
@@ -428,6 +433,12 @@ HRESULT InitApp()
 
 	g_pd3dDevice->CreateBlendState(&blendDesc, &g_pBlendState);
 
+	// SpriteBatch
+	g_pSpriteBatch = new DirectX::SpriteBatch(g_pImmediateContext);
+	// SpriteFont
+	g_pFont = new DirectX::SpriteFont(g_pd3dDevice, L"Assets\\Arial.ft");
+
+
 	return hr;
 }
 
@@ -471,6 +482,17 @@ HRESULT SetupTransformSRV()
 //
 void CleanupApp()
 {
+	if(g_pSpriteBatch)
+	{
+		delete g_pSpriteBatch ;
+		g_pSpriteBatch = nullptr;
+	}
+	if(g_pFont)
+	{
+		delete g_pFont;
+		g_pFont = nullptr;
+	}
+
 	if(g_pTransformSRV)
 	{
 		g_pTransformSRV->Release();
@@ -569,6 +591,7 @@ void SetMatrix()
 {
 	HRESULT hr = S_OK;
 	const uint32_t count = g_InstanceMAX;
+	const float offset = -(g_InstanceMAX*60.0f / 2.0f);
 	XMMATRIX mat;
 
 	D3D11_MAPPED_SUBRESOURCE MappedResource;
@@ -578,7 +601,7 @@ void SetMatrix()
 	
 	for(uint32_t i=0;i<count;i++)
 	{
-		mat = XMMatrixTranslation( 0, 0, i*60.0f );
+		mat = XMMatrixTranslation( 0, 0, i*60.0f+offset );
 		pSrvInstanceData[i].mWorld = ( mat );
 	}
 
@@ -636,6 +659,10 @@ void Render()
     //
     g_pImmediateContext->ClearDepthStencilView( g_pDepthStencilView, D3D11_CLEAR_DEPTH, 1.0f, 0 );
 	
+	float blendFactors[4] = {D3D11_BLEND_ZERO, D3D11_BLEND_ZERO, D3D11_BLEND_ZERO, D3D11_BLEND_ZERO};
+	g_pImmediateContext->RSSetState( g_pRS );
+	g_pImmediateContext->OMSetBlendState( g_pBlendState, blendFactors, 0xffffffff );
+
 	// ÉÇÉfÉãÇèáî‘Ç…ï`âÊ
 	for(DWORD i=0;i<NUMBER_OF_MODELS;i++)
 	{
@@ -688,6 +715,10 @@ void Render()
 			g_pFbxDX11[i]->RenderNodeInstancing(g_pImmediateContext, j,g_InstanceMAX);
 		}
 	}
+
+	g_pSpriteBatch->Begin();
+	g_pFont->DrawString(g_pSpriteBatch, L"Hello, world!", XMFLOAT2(0, 0), DirectX::Colors::Yellow, 0, XMFLOAT2(0, 0), 0.5f );
+	g_pSpriteBatch->End();
 
 	g_pImmediateContext->VSSetShader( NULL, NULL, 0 );
     g_pImmediateContext->PSSetShader( NULL, NULL, 0 );
