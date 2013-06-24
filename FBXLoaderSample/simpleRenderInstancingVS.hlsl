@@ -1,3 +1,10 @@
+struct PerInstanceData
+{
+	matrix instanceMat;
+};
+
+StructuredBuffer<PerInstanceData>	g_pInstanceData :register( t0 );
+
 cbuffer cbGlobal : register( b0 )
 {
 	matrix World;
@@ -22,8 +29,13 @@ struct VS_OUTPUT
 VS_OUTPUT vs_main(VS_INPUT input, uint instanceID : SV_InstanceID)
 {
 	VS_OUTPUT output;
+	matrix instanceWVP = mul(Projection, View);
+	instanceWVP = mul(instanceWVP, World);
+	instanceWVP = mul(instanceWVP, g_pInstanceData[instanceID].instanceMat);
 
-    output.Pos = mul( input.Pos, WVP );
+	instanceWVP = transpose(instanceWVP);
+
+    output.Pos = mul( input.Pos, instanceWVP );
 	output.Tex = input.Tex;
 	return output;
 }

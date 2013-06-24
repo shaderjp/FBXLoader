@@ -49,6 +49,9 @@
     <FxCompile Include="simpleRenderPS.hlsl">
       <Filter>Shaders</Filter>
     </FxCompile>
+    <FxCompile Include="simpleRenderInstancingVS.hlsl">
+      <Filter>Shaders</Filter>
+    </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <Image Include="seafloor.dds">

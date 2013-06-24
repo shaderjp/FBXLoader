@@ -79,11 +79,14 @@ ID3D11Buffer*					g_pcBuffer = nullptr;
 ID3D11VertexShader*                 g_pvsFBX = nullptr;
 ID3D11PixelShader*                  g_ppsFBX = nullptr;
 
+// Instancing
+bool	g_bInstancing = false;
 struct SRVPerInstanceData
 {
 	XMMATRIX mWorld;
 };
 const uint32_t g_InstanceMAX = 32;
+ID3D11VertexShader*             g_pvsFBXInstancing = nullptr;
 ID3D11Buffer*					g_pTransformStructuredBuffer = nullptr;
 ID3D11ShaderResourceView*		g_pTransformSRV = nullptr;
 
@@ -363,6 +366,25 @@ HRESULT InitApp()
         return hr;
     }
 
+	// Compile the vertex shader
+	pVSBlob->Release();
+    hr = CompileShaderFromFile( L"simpleRenderInstancingVS.hlsl", "vs_main", "vs_4_0", &pVSBlob );
+    if( FAILED( hr ) )
+    {
+        MessageBox( NULL,
+                    L"The FX file cannot be compiled.  Please run this executable from the directory that contains the FX file.", L"Error", MB_OK );
+        return hr;
+    }
+
+    // Create the vertex shader
+    hr = g_pd3dDevice->CreateVertexShader( pVSBlob->GetBufferPointer(), pVSBlob->GetBufferSize(), NULL, &g_pvsFBXInstancing );
+    if( FAILED( hr ) )
+    {    
+        pVSBlob->Release();
+        return hr;
+    }
+
+
 	// Define the input layout
     D3D11_INPUT_ELEMENT_DESC layout[] =
     {
@@ -525,6 +547,12 @@ void CleanupApp()
 		g_pRS = nullptr;
 	}
 
+	if(g_pvsFBXInstancing)
+	{
+		g_pvsFBX->Release();
+		g_pvsFBX = nullptr;
+	}
+
 	if(g_pvsFBX)
 	{
 		g_pvsFBX->Release();
@@ -570,6 +598,12 @@ LRESULT CALLBACK WndProc( HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam 
 
     switch( message )
     {
+		case WM_KEYUP:
+			if(wParam==VK_F2)
+			{
+				g_bInstancing = !g_bInstancing;
+			}
+			break;
         case WM_PAINT:
             hdc = BeginPaint( hWnd, &ps );
             EndPaint( hWnd, &ps );
@@ -669,7 +703,8 @@ void Render()
 		// FBX Model‚Ìnode”‚ðŽæ“¾
 		size_t nodeCount = g_pFbxDX11[i]->GetNodeCount();
 
-		g_pImmediateContext->VSSetShader( g_pvsFBX, NULL, 0 );
+		ID3D11VertexShader* pVS = g_bInstancing ? g_pvsFBXInstancing : g_pvsFBX ;
+		g_pImmediateContext->VSSetShader( pVS, NULL, 0 );
 		g_pImmediateContext->VSSetConstantBuffers( 0, 1, &g_pcBuffer );
 		g_pImmediateContext->PSSetShader( g_ppsFBX, NULL, 0 );
 
@@ -686,15 +721,10 @@ void Render()
 			CBFBXMATRIX*	cbFBX = (CBFBXMATRIX*)MappedResource.pData;
 
 			// ¶ŽèŒn
-#if 0
-			cbFBX->mWorld = XMMatrixTranspose( mLocal*g_World );
-			cbFBX->mView = XMMatrixTranspose( g_View );
-			cbFBX->mProj = XMMatrixTranspose( g_Projection );
-#else
 			cbFBX->mWorld = ( g_World );
 			cbFBX->mView = ( g_View );
 			cbFBX->mProj = ( g_Projection );
-#endif
+
 			cbFBX->mWVP = XMMatrixTranspose( mLocal*g_World*g_View*g_Projection );
 
 			g_pImmediateContext->Unmap( g_pcBuffer, 0 );
@@ -711,13 +741,24 @@ void Render()
 			g_pImmediateContext->PSSetConstantBuffers(0, 1, &material.pMaterialCb);
 			g_pImmediateContext->PSSetSamplers(0, 1, &material.pSampler);
 	
-//			g_pFbxDX11[i]->RenderNode( g_pImmediateContext, j );
-			g_pFbxDX11[i]->RenderNodeInstancing(g_pImmediateContext, j,g_InstanceMAX);
+			if(g_bInstancing)
+				g_pFbxDX11[i]->RenderNodeInstancing(g_pImmediateContext, j,g_InstanceMAX);
+			else
+				g_pFbxDX11[i]->RenderNode( g_pImmediateContext, j );
 		}
 	}
 
+	// Text
+	WCHAR wstr[512];
 	g_pSpriteBatch->Begin();
-	g_pFont->DrawString(g_pSpriteBatch, L"Hello, world!", XMFLOAT2(0, 0), DirectX::Colors::Yellow, 0, XMFLOAT2(0, 0), 0.5f );
+	g_pFont->DrawString(g_pSpriteBatch, L"FBX Loader : F2 Change Render Mode", XMFLOAT2(0, 0), DirectX::Colors::Yellow, 0, XMFLOAT2(0, 0), 0.5f );
+
+	if(g_bInstancing)
+		swprintf_s( wstr, L"Render Mode: Instancing" );
+	else
+		swprintf_s( wstr, L"Render Mode: Single Draw" );
+
+	g_pFont->DrawString(g_pSpriteBatch, wstr, XMFLOAT2(0, 16), DirectX::Colors::Yellow, 0, XMFLOAT2(0, 0), 0.5f );
 	g_pSpriteBatch->End();
 
 	g_pImmediateContext->VSSetShader( NULL, NULL, 0 );
