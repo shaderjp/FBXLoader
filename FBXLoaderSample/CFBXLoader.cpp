@@ -148,9 +148,12 @@ void CFBXLoader::TriangulateRecursive(FbxNode* pNode)
             lNodeAttribute->GetAttributeType() == FbxNodeAttribute::eNurbsSurface ||
             lNodeAttribute->GetAttributeType() == FbxNodeAttribute::ePatch)
         {
+			FbxGeometryConverter lConverter(pNode->GetFbxManager());
 			// これでどんな形状も三角形化
-            FbxGeometryConverter lConverter(pNode->GetFbxManager());
-            lConverter.TriangulateInPlace(pNode);
+#if 0
+            lConverter.TriangulateInPlace(pNode);	// 古い手法
+#endif // 0
+			lConverter.Triangulate( mScene, true );
         }
     }
 
