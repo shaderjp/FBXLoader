@@ -175,6 +175,7 @@ public:
 	HRESULT RenderAll( ID3D11DeviceContext* pImmediateContext);
 	HRESULT RenderNode( ID3D11DeviceContext* pImmediateContext, const size_t nodeId );
 	HRESULT RenderNodeInstancing( ID3D11DeviceContext* pImmediateContext, const size_t nodeId, const uint32_t InstanceCount );
+	HRESULT RenderNodeInstancingIndirect( ID3D11DeviceContext* pImmediateContext, const size_t nodeId, ID3D11Buffer* pBufferForArgs,  const uint32_t AlignedByteOffsetForArgs );
 
 	size_t GetNodeCount(){ return m_meshNodeArray.size(); }
 

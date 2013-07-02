@@ -386,4 +386,38 @@ HRESULT CFBXRenderDX11::RenderNodeInstancing( ID3D11DeviceContext* pImmediateCon
 	return hr;
 }
 
+HRESULT CFBXRenderDX11::RenderNodeInstancingIndirect( ID3D11DeviceContext* pImmediateContext, const size_t nodeId, ID3D11Buffer* pBufferForArgs, const uint32_t AlignedByteOffsetForArgs)
+{
+	size_t nodeCount = m_meshNodeArray.size();
+	if(nodeCount==0 || nodeCount<=nodeId )
+		return S_OK;
+
+	HRESULT hr = S_OK;
+	
+	MESH_NODE* node = &m_meshNodeArray[nodeId];
+
+	if(node->vertexCount==0)
+		return S_OK;
+
+	UINT stride = sizeof( VERTEX_DATA );
+	UINT offset = 0;
+	pImmediateContext->IASetVertexBuffers( 0, 1, &node->m_pVB, &stride, &offset );
+	pImmediateContext->IASetInputLayout(node->m_pInputLayout);
+	pImmediateContext->IASetPrimitiveTopology( D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST );
+
+	// インデックスバッファが存在する場合
+	if(node->m_indexBit!=MESH_NODE::INDEX_NOINDEX)
+	{
+		DXGI_FORMAT indexbit = DXGI_FORMAT_R16_UINT;
+		if(node->m_indexBit==MESH_NODE::INDEX_32BIT)
+			indexbit = DXGI_FORMAT_R32_UINT;
+		
+		pImmediateContext->IASetIndexBuffer(node->m_pIB,indexbit,0);
+
+		pImmediateContext->DrawIndexedInstancedIndirect(pBufferForArgs, AlignedByteOffsetForArgs);
+	}
+
+	return hr;
+}
+
 }	// namespace FBX_LOADER
