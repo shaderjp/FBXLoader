@@ -34,6 +34,7 @@ IDXGISwapChain*                     g_pSwapChain = NULL;
 ID3D11RenderTargetView*             g_pRenderTargetView = NULL;
 ID3D11Texture2D*                    g_pDepthStencil = NULL;
 ID3D11DepthStencilView*             g_pDepthStencilView = NULL;
+ID3D11DepthStencilState*			g_pDepthStencilState = NULL;
 
 XMMATRIX                            g_World;
 XMMATRIX                            g_View;
@@ -305,6 +306,15 @@ HRESULT InitDevice()
 
     g_pImmediateContext->OMSetRenderTargets( 1, &g_pRenderTargetView, g_pDepthStencilView );
 
+	// Create depth stencil state
+	D3D11_DEPTH_STENCIL_DESC descDSS;
+    ZeroMemory( &descDSS, sizeof(descDSS) );
+	descDSS.DepthEnable	= TRUE;
+    descDSS.DepthWriteMask	= D3D11_DEPTH_WRITE_MASK_ALL;
+    descDSS.DepthFunc	= D3D11_COMPARISON_LESS;
+    descDSS.StencilEnable	= FALSE;
+	hr = g_pd3dDevice->CreateDepthStencilState(&descDSS,&g_pDepthStencilState );
+	
     // Setup the viewport
     D3D11_VIEWPORT vp;
     vp.Width = (FLOAT)width;
@@ -579,6 +589,7 @@ void CleanupDevice()
 {
     if( g_pImmediateContext ) g_pImmediateContext->ClearState();
 
+	if( g_pDepthStencilState ) g_pDepthStencilState->Release();
 	if( g_pDepthStencil ) g_pDepthStencil->Release();
     if( g_pDepthStencilView ) g_pDepthStencilView->Release();
     if( g_pRenderTargetView ) g_pRenderTargetView->Release();
@@ -696,6 +707,7 @@ void Render()
 	float blendFactors[4] = {D3D11_BLEND_ZERO, D3D11_BLEND_ZERO, D3D11_BLEND_ZERO, D3D11_BLEND_ZERO};
 	g_pImmediateContext->RSSetState( g_pRS );
 	g_pImmediateContext->OMSetBlendState( g_pBlendState, blendFactors, 0xffffffff );
+	g_pImmediateContext->OMSetDepthStencilState( g_pDepthStencilState, 0);
 
 	// ƒ‚ƒfƒ‹‚ğ‡”Ô‚É•`‰æ
 	for(DWORD i=0;i<NUMBER_OF_MODELS;i++)
