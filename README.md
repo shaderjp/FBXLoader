@@ -10,7 +10,7 @@ FBXを読み込んでDirect3D11で描画するサンプルです。
 商用・非商用好きに使用してかまいません。
 
 - Visual Studio 2012
-- FBX SDK 2014.1(下記からダウンロードできます。)
+- FBX SDK 2014.2(下記からダウンロードできます。)
 	- http://usa.autodesk.com/adsk/servlet/pc/item?siteID=123112&id=10775847
 - DirectXTKを使用しています。
 	- http://directxtk.codeplex.com/
